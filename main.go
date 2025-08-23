@@ -41,18 +41,18 @@ func main() {
 func initState() (*state, error) {
 	cfg, err := config.Read()
 	if err != nil {
-		return &state{}, fmt.Errorf("Error config: %w", err)
+		return &state{}, fmt.Errorf("error reading config: %w", err)
 	}
 
-	programState := &state{cfg: &cfg}
-
-	db, err := sql.Open("postgres", programState.cfg.DBURL)
+	db, err := sql.Open("postgres", cfg.DBURL)
 	if err != nil {
-		return &state{}, fmt.Errorf("Error connecting to DB: %w", err)
+		return &state{}, fmt.Errorf("error connecting to db: %w", err)
 	}
 
-	programState.db = database.New(db)
-	return programState, nil
+	return &state{
+		cfg: &cfg,
+		db:  database.New(db),
+	}, nil
 }
 
 func prepareCommands() commands {
@@ -68,12 +68,12 @@ func prepareCommands() commands {
 
 func parseArgs() (command, error) {
 	if len(os.Args) < 2 {
-		return command{}, fmt.Errorf("Usage %s <command> [args ...]\n", path.Base(os.Args[0]))
+		return command{},
+			fmt.Errorf("Usage: %s <command> [args ...]\n", path.Base(os.Args[0]))
 	}
 
-	cmd := command{}
-	cmd.Name = os.Args[1]
-	cmd.Args = os.Args[2:]
-
-	return cmd, nil
+	return command{
+		Name: os.Args[1],
+		Args: os.Args[2:],
+	}, nil
 }
