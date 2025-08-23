@@ -10,22 +10,18 @@ func handleLogin(s *state, cmd command) error {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
 	}
 
-	ctx := context.Background()
-	userName := cmd.Args[0]
-	user, err := s.db.GetUser(ctx, userName)
+	name := cmd.Args[0]
+
+	_, err := s.db.GetUser(context.Background(), name)
 	if err != nil {
-		return fmt.Errorf("Could not authenticate user: %w", err)
+		return fmt.Errorf("couldn't find user: %w", err)
 	}
 
-	if user.Name != userName {
-		return fmt.Errorf("Retrieved Username doesn't match provided username")
-	}
-
-	err = s.cfg.SetUser(user.Name)
+	err = s.cfg.SetUser(name)
 	if err != nil {
-		return fmt.Errorf("Could not set user: %w", err)
+		return fmt.Errorf("couldn't set current user: %w", err)
 	}
 
-	fmt.Println("User switched successfuly!")
+	fmt.Println("User switched successfully!")
 	return nil
 }

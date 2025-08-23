@@ -16,22 +16,28 @@ func handleRegister(s *state, cmd command) error {
 
 	ctx := context.Background()
 
-	user, err := s.db.CreateUser(
-		ctx,
+	name := cmd.Args[0]
+	user, err := s.db.CreateUser(ctx,
 		database.CreateUserParams{
 			ID:        uuid.New(),
-			Name:      cmd.Args[0],
+			Name:      name,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
-		},
-	)
+		})
 	if err != nil {
-		return fmt.Errorf("Could not create user: %w", err)
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 
 	if err := s.cfg.SetUser(user.Name); err != nil {
-		return fmt.Errorf("Could not set current user: %w", err)
+		return fmt.Errorf("couldn't set current user: %w", err)
 	}
 
+	fmt.Println("User created successfully:")
+	printUser(user)
 	return nil
+}
+
+func printUser(user database.User) {
+	fmt.Printf(" * ID:      %v\n", user.ID)
+	fmt.Printf(" * Name:    %v\n", user.ID)
 }
