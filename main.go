@@ -7,8 +7,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/xixotron/aleyGator/internal/config"
-	"github.com/xixotron/aleyGator/internal/database"
+	"github.com/xixotron/aGator/internal/config"
+	"github.com/xixotron/aGator/internal/database"
 
 	_ "github.com/lib/pq"
 )
