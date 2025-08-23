@@ -10,8 +10,15 @@ import (
 )
 
 func handleDeleteAllUsers(s *state, cmd command) error {
-	return s.db.DeleteAllUsers(context.Background())
+	err := s.db.DeleteAllUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("couldn't delete users: %w", err)
+	}
+
+	fmt.Println("Database reset successfully!")
+	return s.cfg.SetUser("")
 }
+
 func handleRegister(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
@@ -63,5 +70,5 @@ func handleLogin(s *state, cmd command) error {
 
 func printUser(user database.User) {
 	fmt.Printf(" * ID:      %v\n", user.ID)
-	fmt.Printf(" * Name:    %v\n", user.ID)
+	fmt.Printf(" * Name:    %v\n", user.Name)
 }
