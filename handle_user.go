@@ -9,6 +9,9 @@ import (
 	"github.com/xixotron/aGator/internal/database"
 )
 
+func handleDeleteAllUsers(s *state, cmd command) error {
+	return s.db.DeleteAllUsers(context.Background())
+}
 func handleRegister(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
@@ -37,10 +40,6 @@ func handleRegister(s *state, cmd command) error {
 	return nil
 }
 
-func printUser(user database.User) {
-	fmt.Printf(" * ID:      %v\n", user.ID)
-	fmt.Printf(" * Name:    %v\n", user.ID)
-}
 func handleLogin(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
@@ -60,4 +59,9 @@ func handleLogin(s *state, cmd command) error {
 
 	fmt.Println("User switched successfully!")
 	return nil
+}
+
+func printUser(user database.User) {
+	fmt.Printf(" * ID:      %v\n", user.ID)
+	fmt.Printf(" * Name:    %v\n", user.ID)
 }

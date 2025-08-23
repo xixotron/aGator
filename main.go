@@ -19,7 +19,6 @@ type state struct {
 }
 
 func main() {
-
 	programState, err := initState()
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +26,6 @@ func main() {
 
 	cmds := prepareCommands()
 	cmd, err := parseArgs()
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,6 +60,7 @@ func prepareCommands() commands {
 
 	cmds.register("login", handleLogin)
 	cmds.register("register", handleRegister)
+	cmds.register("reset", handleDeleteAllUsers)
 
 	return cmds
 }
