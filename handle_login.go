@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -9,7 +10,18 @@ func handleLogin(s *state, cmd command) error {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
 	}
 
-	err := s.cfg.SetUser(cmd.Args[0])
+	ctx := context.Background()
+	userName := cmd.Args[0]
+	user, err := s.db.GetUser(ctx, userName)
+	if err != nil {
+		return fmt.Errorf("Could not authenticate user: %w", err)
+	}
+
+	if user.Name != userName {
+		return fmt.Errorf("Retrieved Username doesn't match provided username")
+	}
+
+	err = s.cfg.SetUser(user.Name)
 	if err != nil {
 		return fmt.Errorf("Could not set user: %w", err)
 	}

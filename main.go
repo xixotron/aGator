@@ -1,42 +1,79 @@
 package main
 
 import (
-	"github.com/xixotron/aleyGator/internal/config"
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"path"
+
+	"github.com/xixotron/aleyGator/internal/config"
+	"github.com/xixotron/aleyGator/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
 func main() {
-	cfg, err := config.Read()
+
+	programState, err := initState()
 	if err != nil {
-		log.Fatalf("Error config: %v", err)
+		log.Fatal(err)
 	}
 
-	programState := &state{
-		cfg: &cfg,
-	}
+	cmds := prepareCommands()
+	cmd, err := parseArgs()
 
-	cmds := commands{
-		registeredCommands: make(map[string]func(*state, command) error),
-	}
-	cmds.register("login", handleLogin)
-
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage %s <command> [args ...]\n", path.Base(os.Args[0]))
-	}
-
-	cmd := command{
-		Name: os.Args[1],
-		Args: os.Args[2:],
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	err = cmds.run(programState, cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initState() (*state, error) {
+	cfg, err := config.Read()
+	if err != nil {
+		return &state{}, fmt.Errorf("Error config: %w", err)
+	}
+
+	programState := &state{cfg: &cfg}
+
+	db, err := sql.Open("postgres", programState.cfg.DBURL)
+	if err != nil {
+		return &state{}, fmt.Errorf("Error connecting to DB: %w", err)
+	}
+
+	programState.db = database.New(db)
+	return programState, nil
+}
+
+func prepareCommands() commands {
+	cmds := commands{
+		registeredCommands: make(map[string]func(*state, command) error),
+	}
+
+	cmds.register("login", handleLogin)
+	cmds.register("register", handleRegister)
+
+	return cmds
+}
+
+func parseArgs() (command, error) {
+	if len(os.Args) < 2 {
+		return command{}, fmt.Errorf("Usage %s <command> [args ...]\n", path.Base(os.Args[0]))
+	}
+
+	cmd := command{}
+	cmd.Name = os.Args[1]
+	cmd.Args = os.Args[2:]
+
+	return cmd, nil
 }
