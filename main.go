@@ -1,27 +1,42 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/xixotron/aleyGator/internal/config"
+	"log"
+	"os"
+	"path"
 )
 
-func main() {
+type state struct {
+	cfg *config.Config
+}
 
+func main() {
 	cfg, err := config.Read()
 	if err != nil {
-		log.Fatalf("Error reading initial config: %v", err)
+		log.Fatalf("Error config: %v", err)
 	}
 
-	fmt.Printf("Read config: %+v\n", cfg)
+	programState := &state{
+		cfg: &cfg,
+	}
 
-	cfg.SetUser("xixotron")
+	cmds := commands{
+		registeredCommands: make(map[string]func(*state, command) error),
+	}
+	cmds.register("login", handleLogin)
 
-	cfg2, err := config.Read()
+	if len(os.Args) < 2 {
+		log.Fatalf("Usage %s <command> [args ...]\n", path.Base(os.Args[0]))
+	}
+
+	cmd := command{
+		Name: os.Args[1],
+		Args: os.Args[2:],
+	}
+
+	err = cmds.run(programState, cmd)
 	if err != nil {
-		log.Fatalf("Error reading modified config: %v", err)
+		log.Fatal(err)
 	}
-
-	fmt.Printf("Read modified config: %+v\n", cfg2)
 }
