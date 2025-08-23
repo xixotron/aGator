@@ -19,6 +19,24 @@ func handleDeleteAllUsers(s *state, cmd command) error {
 	return s.cfg.SetUser("")
 }
 
+func handleGetUsers(s *state, cmd command) error {
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("couldn't get users: %w", err)
+	}
+
+	fmt.Println("Registered users:")
+	for _, user := range users {
+		if user.Name == s.cfg.CurrentUserName {
+			fmt.Printf(" * %s (current)\n", user.Name)
+			continue
+		}
+		fmt.Printf(" * %s\n", user.Name)
+	}
+
+	return nil
+}
+
 func handleRegister(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("Usage: %s <username>", cmd.Name)
