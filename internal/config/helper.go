@@ -30,6 +30,7 @@ func write(cfg Config) error {
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
 	err = encoder.Encode(cfg)
 	if err != nil {
 		return err
