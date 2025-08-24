@@ -25,6 +25,11 @@ func handleListUsers(s *state, cmd command) error {
 		return fmt.Errorf("couldn't list users: %w", err)
 	}
 
+	if len(users) == 0 {
+		fmt.Println("No registered users found")
+		return nil
+	}
+
 	fmt.Println("Registered users:")
 	for _, user := range users {
 		if user.Name == s.cfg.CurrentUserName {
