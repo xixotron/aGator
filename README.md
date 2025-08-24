@@ -76,5 +76,5 @@ Lastly as a user who is following the feeds `aGator login <user_name>` now we ca
 read the last entries to the feeds:
 
 ```bash
-aGator posts
+aGator browse [limit]
 ```
