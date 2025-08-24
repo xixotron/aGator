@@ -54,7 +54,7 @@ func scrapeFeeds(db *database.Queries, timeBetweenRequests time.Duration) error 
 			ID:        feed.ID,
 		})
 		if err != nil {
-			return fmt.Errorf("couldn't mark the feed as read: %w", err)
+			return fmt.Errorf("couldn't mark the feed %s as fetched: %w", feed.Name, err)
 		}
 
 		scrapeFeed(db, feed)
@@ -64,7 +64,7 @@ func scrapeFeeds(db *database.Queries, timeBetweenRequests time.Duration) error 
 func scrapeFeed(db *database.Queries, feed database.Feed) {
 	content, err := rss.FetchFeed(context.Background(), feed.Url)
 	if err != nil {
-		log.Printf("couldn't fetch feed: %v\n", err)
+		log.Printf("couldn't fetch feed %s: %v\n", feed.Name, err)
 		return
 	}
 
