@@ -24,7 +24,4 @@ WHERE feeds_follow.user_id = $1;
 
 -- name: DeleteFollowFeed :exec
 DELETE FROM feeds_follow
-WHERE feeds_follow.user_id = $1 AND feed_id = (
-  SELECT id FROM feeds
-  WHERE url = $2
-);
+WHERE feeds_follow.user_id = $1 AND feed_id = $2;
