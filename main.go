@@ -64,6 +64,7 @@ func prepareCommands() commands {
 	cmds.register("users", handleListUsers)
 	cmds.register("agg", handleAgg)
 	cmds.register("addfeed", handleAddFeed)
+	cmds.register("feeds", handleListFeeds)
 
 	return cmds
 }
