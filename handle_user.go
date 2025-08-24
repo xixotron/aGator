@@ -26,7 +26,7 @@ func handleListUsers(s *state, cmd command) error {
 	}
 
 	if len(users) == 0 {
-		fmt.Println("No registered users found")
+		fmt.Println("No users found")
 		return nil
 	}
 
