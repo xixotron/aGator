@@ -9,17 +9,13 @@ import (
 	"github.com/xixotron/aGator/internal/database"
 )
 
-func handleFeedFollow(s *state, cmd command) error {
+func handleFeedFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("Usage: %s <url>", cmd.Name)
 	}
 	url := cmd.Args[0]
 
 	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("couldn't find active user: %w", err)
-	}
 	feed, err := s.db.GetFeedByURL(ctx, url)
 	if err != nil {
 		return fmt.Errorf("couldn't find feed with provided url: %w", err)
@@ -42,13 +38,8 @@ func handleFeedFollow(s *state, cmd command) error {
 	return nil
 }
 
-func handleFeedsFollowing(s *state, cmd command) error {
-	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("couldn't find active user: %w", err)
-	}
-	feedsFollows, err := s.db.GetFeedFollowsForUser(ctx, user.ID)
+func handleFeedsFollowing(s *state, cmd command, user database.User) error {
+	feedsFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
 	if err != nil {
 		return fmt.Errorf("couldn't find feeds followed by user: %w", err)
 	}
@@ -67,7 +58,7 @@ func handleFeedsFollowing(s *state, cmd command) error {
 	return nil
 }
 
-func handleAddFeed(s *state, cmd command) error {
+func handleAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("Usage: %s <name> <url>", cmd.Name)
 	}
@@ -75,11 +66,6 @@ func handleAddFeed(s *state, cmd command) error {
 	url := cmd.Args[1]
 
 	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("couldn't find active user: %w", err)
-	}
-
 	feed, err := s.db.CreateFeed(ctx, database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
