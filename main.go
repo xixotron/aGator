@@ -68,6 +68,7 @@ func prepareCommands() commands {
 	cmds.register("follow", middlewareLoggedIn(handleFeedFollow))
 	cmds.register("following", middlewareLoggedIn(handleFeedsFollowing))
 	cmds.register("unfollow", middlewareLoggedIn(handleUnfollow))
+	cmds.register("browse", middlewareLoggedIn(handleBrowse))
 
 	return cmds
 }

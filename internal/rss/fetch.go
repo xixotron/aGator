@@ -6,6 +6,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -58,9 +59,9 @@ func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 }
 
 func (f *RSSFeed) Unescape() {
-	f.Channel.Title = html.UnescapeString(f.Channel.Title)
+	f.Channel.Title = strings.TrimSpace(html.UnescapeString(f.Channel.Title))
 	f.Channel.Link = html.UnescapeString(f.Channel.Link)
-	f.Channel.Description = html.UnescapeString(f.Channel.Description)
+	f.Channel.Description = strings.TrimSpace(html.UnescapeString(f.Channel.Description))
 
 	for _, item := range f.Channel.Item {
 		item.Unescape()
@@ -68,8 +69,8 @@ func (f *RSSFeed) Unescape() {
 }
 
 func (i *RSSItem) Unescape() {
-	i.Title = html.UnescapeString(i.Title)
+	i.Title = strings.TrimSpace(html.UnescapeString(i.Title))
 	i.Link = html.UnescapeString(i.Link)
-	i.Description = html.UnescapeString(i.Description)
+	i.Description = strings.TrimSpace(html.UnescapeString(i.Description))
 	i.PubDate = html.UnescapeString(i.PubDate)
 }
