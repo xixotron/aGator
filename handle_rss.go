@@ -49,7 +49,7 @@ func handleAddFeed(s *state, cmd command) error {
 	}
 
 	fmt.Println("feed added succesfully:")
-	printFeed(feed)
+	printFeed(feed, user)
 	return nil
 }
 
@@ -65,34 +65,30 @@ func handleListFeeds(s *state, cmd command) error {
 		return nil
 	}
 
-	users := make(map[uuid.UUID]string)
-
-	for _, feed := range feeds {
-		_, ok := users[feed.UserID]
-		if ok {
-			continue
-		}
-		user, err := s.db.GetUserName(ctx, feed.UserID)
-		if err != nil {
-			return fmt.Errorf("couldn't find username: %w", err)
-		}
-		users[feed.UserID] = user
-	}
-
 	fmt.Println("Registered feeds:")
+	users := make(map[uuid.UUID]database.User)
 	for _, feed := range feeds {
-		printFeed(feed)
-		fmt.Printf(" * UserName: %v\n", users[feed.UserID])
+		user, ok := users[feed.UserID]
+		if !ok {
+			user, err = s.db.GetUserByID(ctx, feed.UserID)
+			if err != nil {
+				return fmt.Errorf("couldn't find username: %w", err)
+			}
+			users[feed.UserID] = user
+		}
+
+		printFeed(feed, user)
 		fmt.Println()
 		fmt.Println("=====================================")
 	}
+
 	return nil
 }
-func printFeed(f database.Feed) {
+func printFeed(f database.Feed, user database.User) {
 	fmt.Printf(" * ID:       %v\n", f.ID)
 	fmt.Printf(" * Name:     %v\n", f.Name)
 	fmt.Printf(" * Created:  %v\n", f.CreatedAt)
 	fmt.Printf(" * Updated:  %v\n", f.UpdatedAt)
 	fmt.Printf(" * URL:      %v\n", f.Url)
-	fmt.Printf(" * UserID:   %v\n", f.UserID)
+	fmt.Printf(" * UserName: %v\n", f.UserID)
 }
