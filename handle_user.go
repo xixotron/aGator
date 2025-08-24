@@ -54,8 +54,8 @@ func handleRegister(s *state, cmd command) error {
 		database.CreateUserParams{
 			ID:        uuid.New(),
 			Name:      name,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			CreatedAt: time.Now().UTC(),
+			UpdatedAt: time.Now().UTC(),
 		})
 	if err != nil {
 		return fmt.Errorf("couldn't create user: %w", err)

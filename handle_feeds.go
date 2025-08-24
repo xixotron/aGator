@@ -19,8 +19,8 @@ func handleAddFeed(s *state, cmd command, user database.User) error {
 	ctx := context.Background()
 	feed, err := s.db.CreateFeed(ctx, database.CreateFeedParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 		Name:      name,
 		Url:       url,
 		UserID:    user.ID,
@@ -31,8 +31,8 @@ func handleAddFeed(s *state, cmd command, user database.User) error {
 
 	feedFollow, err := s.db.CreateFollowFeed(ctx, database.CreateFollowFeedParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 		FeedID:    feed.ID,
 		UserID:    user.ID,
 	})
