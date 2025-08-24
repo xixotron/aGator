@@ -28,7 +28,7 @@ First create a database in your postgres server using a client
 `CREATE DATABASE <dbname>;` we suggest "gator" as the name.
 
 Then the necesary tables need to be created inside the new database,
-for this we have provided in [sql/schema](/sql/schemal) migration files to
+for this we have provided in [sql/schema](https://github.com/xixotron/aGator/tree/main/sql/schema) migration files to
 configure the database.
 
 We used [Goose](https://github.com/pressly/goose) to apply these migration
